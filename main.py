@@ -1,5 +1,6 @@
 import os
-import wave
+
+from utils import WAVFile
 
 # Get list of WAV files in data folder
 data_folder = 'data'
@@ -13,10 +14,10 @@ wav_file = wav_files[0]
 # read byte by byte
 file_path = os.path.join(data_folder, wav_file)
 with open(file_path, 'rb') as file:
-    file.seek(24)  # Set position to byte 25 (0-indexed)
-    raw_bytes = file.read(4)  # Read 4 bytes (25-28)
-    raw_number = int.from_bytes(raw_bytes, byteorder='little', signed=False)
-    print(raw_number)
+    w = WAVFile(file)
+    print(w.sample_rate())
+    print(w.bits_per_sample())
+    print(w.size_of_data())
 
 
 # all_numbers = []
