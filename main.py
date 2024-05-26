@@ -1,39 +1,33 @@
-import os
+from pathlib import Path
+from typing import Union
 
-from utils import WAVFile
-
-# Get list of WAV files in data folder
-data_folder = 'data'
-wav_files = [f for f in os.listdir(data_folder) if f.endswith('.wav')]
-
-# Print number of files
-print(f"Number of WAV files: {len(wav_files)}")
-
-wav_file = wav_files[0]
-
-# read byte by byte
-file_path = os.path.join(data_folder, wav_file)
-with open(file_path, 'rb') as file:
-    w = WAVFile(file)
-    print(w.sample_rate())
-    print(w.bits_per_sample())
-    print(w.size_of_data())
+from pydub import AudioSegment
 
 
-# all_numbers = []
+def convert_wav_to_flac(wav_file: Union[str, Path], flac_file: Union[str, Path]) -> None:
+    """
+    Converts a wav file to flac format.
 
-# # Read raw bytes from all WAV files and collect all numbers
-# for wav_file_name in wav_files:
-#     file_path = os.path.join(data_folder, wav_file_name)
-#     with wave.open(file_path, 'rb') as wav_file:
-#         raw_bytes = wav_file.readframes(wav_file.getnframes())
-#         all_numbers.extend(list(raw_bytes))
-#         print(wav_file_name)
+    Args:
+        wav_file (str or Path): Path to the input wav file.
+        flac_file (str or Path): Path to the output flac file.
+    """
+    wav_file = Path(wav_file)
+    flac_file = Path(flac_file)
 
-# # Find the max and min of all the numbers
-# max_number = max(all_numbers)
-# min_number = min(all_numbers)
+    # read the wav file and export as flac
+    song = AudioSegment.from_wav(wav_file)
+    song.export(flac_file, format="flac")
 
-# # Print the max and min numbers
-# print(f"Max number: {max_number}")
-# print(f"Min number: {min_number}")
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) != 3:
+        print("usage: python main.py <path_to_wav_file> <path_to_flac_file>")
+        sys.exit(1)
+
+    wav_file = sys.argv[1]
+    flac_file = sys.argv[2]
+
+    convert_wav_to_flac(wav_file, flac_file)
+    print(f"converted {wav_file} to {flac_file}")
